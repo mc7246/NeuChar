@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2018 Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2018 Senparc
+    Copyright (C) 2019 Senparc
     
     文件名：Register.cs
     文件功能描述：NeuChar 注册类
@@ -60,6 +60,7 @@ namespace Senparc.NeuChar
         /// 节点类型注册集合
         /// </summary>
         public static Dictionary<string, Type> NeuralNodeRegisterCollection = new Dictionary<string, Type>();
+        //TODO: public static Dictionary<string, Type> NeuralNodeRegisterCollection { get; set; } = new Dictionary<string, Type>();
 
 
         static Register()
@@ -85,7 +86,6 @@ namespace Senparc.NeuChar
         /// RegisterApiBind 执行锁
         /// </summary>
         private static object RegisterApiBindLck = new object();
-
 
         /// <summary>
         /// 自动扫描并注册 ApiBind

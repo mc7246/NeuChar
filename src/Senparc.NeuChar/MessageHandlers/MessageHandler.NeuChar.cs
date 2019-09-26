@@ -1,7 +1,7 @@
 ﻿#region Apache License Version 2.0
 /*----------------------------------------------------------------
 
-Copyright 2018 Suzhou Senparc Network Technology Co.,Ltd.
+Copyright 2019 Suzhou Senparc Network Technology Co.,Ltd.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
 except in compliance with the License. You may obtain a copy of the License at
@@ -19,7 +19,7 @@ Detail: https://github.com/JeffreySu/WeiXinMPSDK/blob/master/license.md
 #endregion Apache License Version 2.0
 
 /*----------------------------------------------------------------
-    Copyright (C) 2018 Senparc
+    Copyright (C) 2019 Senparc
     
     文件名：MessageHandler.NeuChar.cs
     文件功能描述：微信请求中有关 NeuChar 方法的集中处理方法
@@ -37,6 +37,7 @@ using Senparc.CO2NET.Extensions;
 using Senparc.CO2NET.Helpers;
 using Senparc.CO2NET.Trace;
 using Senparc.CO2NET.Utilities;
+using Senparc.NeuChar.Context;
 using Senparc.NeuChar.Entities;
 using Senparc.NeuChar.Entities.App;
 using Senparc.NeuChar.NeuralSystems;
@@ -49,7 +50,10 @@ using System.Threading.Tasks;
 
 namespace Senparc.NeuChar.MessageHandlers
 {
-    public abstract partial class MessageHandler<TC, TRequest, TResponse>
+    public abstract partial class MessageHandler<TMC, TRequest, TResponse>
+        where TMC : class, IMessageContext<TRequest, TResponse>, new()
+        where TRequest : class, IRequestMessageBase
+        where TResponse : class, IResponseMessageBase
     {
         static MessageHandler()
         {
@@ -102,8 +106,9 @@ namespace Senparc.NeuChar.MessageHandlers
                 {
                     case NeuCharActionType.GetConfig:
                         {
-                            if (configFileExisted)//本次对话会创建，但不在读取，利可读取可能会发生“无法访问已关闭文件”的错误
+                            if (configFileExisted)
                             {
+                                //文件刚创建，但不再读取，此时读取可能会发生“无法访问已关闭文件”的错误
                                 using (var fs = FileHelper.GetFileStream(file))
                                 {
                                     using (var sr = new StreamReader(fs, Encoding.UTF8))
@@ -173,7 +178,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             result = dataItems.ToJson();
                         }
                         break;
-                    case NeuCharActionType.PushNeuCharAppConfig:
+                    case NeuCharActionType.PushNeuCharAppConfig://推送 NeuChar App 配置
                         {
                             var configFileDir = Path.Combine(path, "AppConfig");
                             if (!Directory.Exists(configFileDir))
@@ -199,7 +204,7 @@ namespace Senparc.NeuChar.MessageHandlers
                             result = "OK";
                         }
                         break;
-                    case NeuCharActionType.PullNeuCharAppConfig:
+                    case NeuCharActionType.PullNeuCharAppConfig://拉取 NeuCharApp 配置
                         {
                             var requestData = requestMessage.RequestData.GetObject<PullConfigRequestData>();
                             var mainVersion = requestData.Version.Split('.')[0];//主版本号
